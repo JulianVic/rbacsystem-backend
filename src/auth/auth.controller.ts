@@ -1,11 +1,11 @@
 // auth.controller.ts
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from './auth.guard';
+import { JwtAuthGuard } from './guard/auth.guard';
 
 @Controller('auth')
+@UseGuards(JwtAuthGuard)
 export class AuthController {
   @Get('profile')
-  @UseGuards(JwtAuthGuard)
   getProfile() {
     return { message: 'Protected route accessed successfully' };
   }
