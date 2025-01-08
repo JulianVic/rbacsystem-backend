@@ -1,47 +1,39 @@
-import { Controller, Get, Req, Post, Put, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { RolesGuard } from '../guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
+import { Controller, Get, Put, Post, UseGuards } from '@nestjs/common';
+import { ConnService } from './conn.service';
+import { JwtAuthGuard } from 'src/auth/guard/auth.guard';
+import { AccessControlService } from 'src/access-control/access-control.service';
+import { DecodedToken } from 'src/common/interfaces/token.interface';
+import { User } from 'src/common/decorators/user.decorator';
+
+@UseGuards(JwtAuthGuard)
 @Controller('conn')
-@UseGuards(JwtAuthGuard, RolesGuard)
-export class ConnectivityController {
-
-  @Get('debug-token')
-  debugToken(@Req() request) {
-    const user = request.user;
-
-    return {
-      tokenInfo: {
-        user: user,
-        roles: user['urn:zitadel:iam:org:project:298723041083434695:roles'],
-        metadata: user['urn:zitadel:iam:user:metadata']
-      },
-      decodedRoles: Object.keys(user['urn:zitadel:iam:org:project:298723041083434695:roles'] || {}),
-      message: 'Información del token decodificado'
-    };
-  }
-
+export class ConnController {
+  constructor(private readonly connService: ConnService, private readonly accessControlService: AccessControlService) {}
+  
   @Put('reset_line')
-  @Roles('admin', 'gerent', 'facilities')
-  resetLine() {
-    return {
-      message: 'Línea reseteada exitosamente'
-    };//
+  async resetLine(@User() decodedToken: DecodedToken) {
+    this.accessControlService.authorizeAccess({
+      ...decodedToken,
+      endpoint: 'reset_line',
+    })
+    return this.connService.resetLine();
   }
 
   @Get('test_connectivity')
-  @Roles('support', 'facilities', 'gerent')
-  testConnectivity() {
-    return {
-      message: 'Conectividad probada exitosamente'
-    };
+  async testConnectivity(@User() decodedToken: DecodedToken) {
+    this.accessControlService.authorizeAccess({
+      ...decodedToken,
+      endpoint: 'test_connectivity',
+    })
+    return this.connService.testConnectivity();
   }
 
   @Post('facture')
-  @Roles('admin', 'gerent')
-  facture() {
-    return {
-      message: 'Factura generada exitosamente'
-    };
+  async facture(@User() decodedToken: DecodedToken) {
+    this.accessControlService.authorizeAccess({
+      ...decodedToken,
+      endpoint: 'facture',
+    })
+    return this.connService.facture();
   }
 }
