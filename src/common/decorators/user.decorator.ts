@@ -1,9 +1,14 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { DecodedToken } from '../interfaces/token.interface';
+import { createParamDecorator } from "@nestjs/common";
+
+import { ExecutionContext } from "@nestjs/common";
 
 export const User = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): DecodedToken => {
+  (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    return request.user;
+    const token = request.headers.authorization?.split(' ')[1];
+    return {
+      ...request.user,
+      accessToken: token
+    };
   },
 );

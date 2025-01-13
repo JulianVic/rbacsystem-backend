@@ -1,8 +1,9 @@
 export interface DecodedToken {
-  [key: string]: any;  // Para las claims personalizadas
+  [key: string]: any;
   sub: string;
   iss: string;
   aud: string[];
   exp: number;
   iat: number;
+  accessToken: string;
 }

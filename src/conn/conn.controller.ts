@@ -1,6 +1,6 @@
 import { Controller, Get, Put, Post, UseGuards } from '@nestjs/common';
 import { ConnService } from './conn.service';
-import { JwtAuthGuard } from 'src/auth/guard/auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { AccessControlService } from 'src/access-control/access-control.service';
 import { DecodedToken } from 'src/common/interfaces/token.interface';
 import { User } from 'src/common/decorators/user.decorator';
