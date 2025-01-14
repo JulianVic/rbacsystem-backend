@@ -25,8 +25,6 @@ export class AccessControlService {
     if (!endpointRequirements) {
       throw new ForbiddenException('Endpoint not found in access control list');
     }
-    console.log('Roles permitidos para este endpoint:', endpointRequirements);
-    console.log('Roles del usuario:', userRoles);
 
     // Para cada rol del usuario
     for (const userRole of userRoles) {

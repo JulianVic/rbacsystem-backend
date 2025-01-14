@@ -11,7 +11,9 @@ export class RoleService {
 
   constructor(private configService: ConfigService) {
     this.ISSUER = this.configService.get<string>("ISSUER");
-    this.ZITADEL_QASAR_PROJECT_ID = this.configService.get<string>("ZITADEL_QASAR_PROJECT_ID");
+    this.ZITADEL_QASAR_PROJECT_ID = this.configService.get<string>(
+      "ZITADEL_QASAR_PROJECT_ID"
+    );
   }
 
   async create(createRoleDto: CreateRoleDto, token: string) {
@@ -23,7 +25,7 @@ export class RoleService {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            Accept: "application/json",//
+            Accept: "application/json", //
           },
         }
       );
@@ -74,6 +76,28 @@ export class RoleService {
     } catch (error) {
       throw new HttpException(
         error.response?.data?.message || "Error deleting role",
+        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async read(token: string) {
+    try {
+      const response = await axios.post(
+        `${this.ISSUER}/management/v1/projects/${this.ZITADEL_QASAR_PROJECT_ID}/roles/_search`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data?.message || "Error reading roles",
         error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
