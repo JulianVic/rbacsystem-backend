@@ -85,7 +85,13 @@ export class RoleService {
     try {
       const response = await axios.post(
         `${this.ISSUER}/management/v1/projects/${this.ZITADEL_QASAR_PROJECT_ID}/roles/_search`,
-        {},
+        {
+          query: {
+            offset: "0",
+            limit: 100,
+            asc: true
+          }
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
